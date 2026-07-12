@@ -5,7 +5,7 @@ A modernized, high-performance web and mobile clone of Bangladesh's leading groc
 
 ---
 
-## 📊 Database Architecture & ER Diagram
+##  Database Architecture & ER Diagram
 
 The system relies on a lean, 4-table relational database model designed to guarantee historical accounting integrity (capturing the exact unit prices at checkout regardless of future updates) and feed the backend machine learning engines.
 
@@ -21,7 +21,7 @@ The system relies on a lean, 4-table relational database model designed to guara
 
 ---
 
-## ⚙️ Backend API Layer (Express.js)
+##  Backend API Layer (Express.js)
 
 The backend handles the serverless application logic, REST endpoints, and the primary algorithmic computations for the AI systems.
 
@@ -36,7 +36,7 @@ The backend handles the serverless application logic, REST endpoints, and the pr
 
 ---
 
-## 🎨 Frontend & Mobile Presentation Layer (React.js)
+##  Frontend & Mobile Presentation Layer (React.js)
 
 The user interface delivers a major visual upgrade over the original Shwapno architecture, eliminating heavy page nesting in favor of a clean, responsive layout optimized for web browsers and mobile engines.
 
@@ -47,7 +47,7 @@ The user interface delivers a major visual upgrade over the original Shwapno arc
 
 ---
 
-## 🤖 Advanced AI & Machine Learning Implementations
+##  Advanced AI & Machine Learning Implementations
 
 The core focus of this application is leveraging Artificial Intelligence to optimize the consumer shopping experience and maximize merchant sales velocity. The following AI pipelines are integrated directly into the system:
 
