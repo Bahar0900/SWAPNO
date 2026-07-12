@@ -23,6 +23,40 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
+// POST: Customer Registration
+// POST: Customer Registration
+app.post('/api/auth/register', async (req, res) => {
+    const { email, first_name, last_name } = req.body;
+    
+    if (!email || !first_name) {
+        return res.status(400).json({ error: "Email and First Name are required fields." });
+    }
+
+    // Combine them safely into the single "name" string your schema expects
+    const fullCustomerName = `${first_name.trim()} ${last_name ? last_name.trim() : ''}`.trim();
+
+    try {
+        // Check if a customer with this email already exists
+        const existingCustomer = await db.get("SELECT * FROM CUSTOMERS WHERE email = ?", [email.trim().toLowerCase()]);
+        if (existingCustomer) {
+            return res.status(400).json({ error: "A customer with this email address already exists." });
+        }
+
+        // Insert using the verified "name" column signature
+        const result = await db.run(
+            `INSERT INTO CUSTOMERS (name, email) VALUES (?, ?)`,
+            [fullCustomerName, email.trim().toLowerCase()]
+        );
+
+        // Retrieve the newly created user profile 
+        const newCustomer = await db.get("SELECT * FROM CUSTOMERS WHERE customer_id = ?", [result.lastID]);
+        
+        res.status(201).json({ message: "Registration successful!", user: newCustomer });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // GET: Product Catalog Retrieval
 app.get('/api/products', async (req, res) => {
     try {
