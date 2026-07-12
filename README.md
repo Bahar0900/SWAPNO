@@ -11,7 +11,7 @@ The system relies on a lean, 4-table relational database model designed to guara
 
 ### ER Diagram
 <!-- Replace the path below with your image file path once you add it -->
-![Shwapno Clone ER Diagram](./assets/er-diagram.png)
+![Shwapno Clone ER Diagram](./assests/ecommerce_erd_horizontal.png)
 
 ### Schema Overview
 *   **CUSTOMERS:** Manages user identity, contact points, and authentication profiles.
