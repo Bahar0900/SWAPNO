@@ -1,0 +1,32 @@
+# 🗄️ Database Files (CRITICAL for SQLite)
+backend/database.sqlite
+backend/database.sqlite-journal
+backend/database.sqlite-wal
+*.db
+*.sqlite
+
+# 📦 Dependency Folders (Including explicit sub-folders)
+node_modules/
+backend/node_modules/
+backend/nodemoduels/
+frontend/node_modules/
+dist/
+build/
+.cache/
+
+# 🔑 Secrets & Environment Variables
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# 💻 Operating System / IDE Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# 🚀 Log Files
+npm-debug.log*
+yarn-debug.log*
