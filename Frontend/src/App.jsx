@@ -11,6 +11,9 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   
+  // New States for Search Mode & Image Upload
+  const [isSemanticSearch, setIsSemanticSearch] = useState(false);
+  
   // Auth Form States
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [emailInput, setEmailInput] = useState('');
@@ -125,6 +128,13 @@ function App() {
     return matchesSearch && matchesCategory;
   });
 
+  // Handle image attachment dummy action
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      alert(`Image "${e.target.files[0].name}" selected successfully!`);
+    }
+  };
+
   if (loading) return <div className="p-10 text-center font-semibold text-gray-500">Loading Shwapno Storefront Engine...</div>;
 
   return (
@@ -140,32 +150,74 @@ function App() {
             <span className="w-3 h-3 rounded-full bg-[#fce303]"></span>
           </div>
 
-          {/* 🔍 Central Marketplace Search Bar */}
-          <div className="flex-1 max-w-2xl w-full flex">
-            <input 
-              type="text" 
-              placeholder="Search for products (e.g. milk, rice)..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 text-gray-900 rounded-l-md border-none focus:outline-none text-sm"
-            />
-            <button className="bg-[#fce303] text-gray-900 px-6 font-bold rounded-r-md hover:bg-yellow-400 text-sm transition-colors">
-              Search
-            </button>
+          {/* 🔍 Central Marketplace Search Bar Section */}
+          <div className="flex-1 max-w-2xl w-full flex items-center gap-3">
+            
+            {/* 🎛️ Toggle Switch for Search Modes */}
+            <div className="flex flex-col items-center justify-center min-w-[110px]">
+              <button 
+                onClick={() => setIsSemanticSearch(!isSemanticSearch)}
+                className={`w-16 h-7 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 relative ${
+                  isSemanticSearch ? 'bg-green-500 justify-start' : 'bg-gray-400 justify-end'
+                }`}
+              >
+                {/* Mode Labels inside the switch */}
+                {isSemanticSearch ? (
+                  <span className="absolute right-2 text-[10px] font-bold text-white select-none">ON</span>
+                ) : (
+                  <span className="absolute left-2 text-[10px] font-bold text-white select-none">OFF</span>
+                )}
+                
+                {/* Sliding white ball */}
+                <div className="bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-300"></div>
+              </button>
+              
+              {/* Dynamic Status Text Indicator */}
+              <span className="text-[10px] mt-0.5 font-medium tracking-wide text-white/90 whitespace-nowrap">
+                {isSemanticSearch ? "Semantic Search On" : "Normal Mode"}
+              </span>
+            </div>
+
+            {/* 📷 Image Input Button Accent */}
+            <label className="flex items-center justify-center bg-white/20 hover:bg-white/30 transition-colors p-2 rounded-md cursor-pointer h-9 w-9 shrink-0" title="Search by image">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 text-white">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+              </svg>
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={handleImageChange} 
+                className="hidden" 
+              />
+            </label>
+
+            {/* Native Input fields */}
+            <div className="flex flex-1">
+              <input 
+                type="text" 
+                placeholder={isSemanticSearch ? "Describe what you need in detail..." : "Search for products (e.g. milk, rice)..."} 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 text-gray-900 rounded-l-md border-none focus:outline-none text-sm h-9"
+              />
+              <button className="bg-[#fce303] text-gray-900 px-6 font-bold rounded-r-md hover:bg-yellow-400 text-sm transition-colors h-9">
+                Search
+              </button>
+            </div>
+
           </div>
 
           {/* 🔐 Dynamic Authentication Action Panel */}
           <div className="flex items-center gap-4 text-sm">
             {isLoggedIn ? (
               <div className="flex items-center gap-3">
-                {/* Fixed line mapping the unified profile name layout securely */}
                 <span className="font-medium text-white bg-black/20 px-3 py-1 rounded-full">
                   Hello, <b>{userData.name || userData.first_name}</b>
                 </span>
                 <button onClick={() => { setIsLoggedIn(false); setUserData(null); }} className="text-xs underline text-yellow-200 hover:text-white">Logout</button>
               </div>
             ) : isRegisterMode ? (
-              /* Registration Module Form */
               <form onSubmit={handleRegister} className="flex flex-wrap items-center gap-2 bg-white/10 p-2 rounded-md">
                 <input 
                   type="text" placeholder="First Name" required
@@ -188,7 +240,6 @@ function App() {
                 <button type="button" onClick={() => setIsRegisterMode(false)} className="text-xs text-white underline ml-1">Cancel</button>
               </form>
             ) : (
-              /* Login Module Form */
               <form onSubmit={handleLogin} className="flex items-center gap-2 bg-white/10 p-1.5 rounded-md">
                 <input 
                   type="email" placeholder="Enter email to login" required
@@ -287,7 +338,6 @@ function App() {
             <div className="py-8 text-center text-xs text-gray-400">Your bag is empty. Add items to checkout.</div>
           ) : (
             <>
-              {/* Cart List Window with Cross Button Action */}
               <div className="space-y-3 max-h-60 overflow-y-auto mb-4 border-b border-gray-100 pb-3">
                 {cart.map(item => (
                   <div key={item.product_id} className="flex justify-between items-center text-xs bg-gray-50 p-2 rounded border border-gray-100 group">
@@ -298,7 +348,6 @@ function App() {
                     
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-gray-900 whitespace-nowrap">৳{item.current_price * item.quantity}</span>
-                      {/* ❌ Delete Cross Action Trigger Button */}
                       <button 
                         onClick={() => removeFromCart(item.product_id)}
                         className="text-gray-400 hover:text-red-600 font-bold px-1 text-sm transition-colors"
@@ -311,7 +360,6 @@ function App() {
                 ))}
               </div>
 
-              {/* Price calculations indicators */}
               <div className="pt-1 mb-4 space-y-1.5 text-xs font-medium">
                 <div className="flex justify-between text-gray-500">
                   <span>Bag Subtotal</span>
@@ -323,7 +371,6 @@ function App() {
                 </div>
               </div>
 
-              {/* Place Order Checkout Button Trigger */}
               <button 
                 onClick={handleCheckout}
                 className="w-full bg-[#fce303] hover:bg-yellow-400 text-gray-900 font-extrabold text-xs py-3 rounded text-center tracking-wider transition-all shadow-sm active:scale-[0.99]"
