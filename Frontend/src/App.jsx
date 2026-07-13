@@ -30,7 +30,7 @@ function App() {
   }, []);
 
   const fetchProducts = () => {
-    axios.get('http://localhost:5000/api/products')
+    axios.get('https://swapno-api.onrender.com/api/products')
       .then(res => {
         setProducts(res.data);
         setLoading(false);
@@ -46,7 +46,7 @@ function App() {
     e.preventDefault();
     if (!emailInput) return;
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { email: emailInput });
+      const res = await axios.post('https://swapno-api.onrender.com/api/auth/login', { email: emailInput });
       setUserData(res.data.user);
       setIsLoggedIn(true);
       setEmailInput('');
@@ -62,7 +62,7 @@ function App() {
     if (!emailInput || !firstNameInput) return alert("Please fill required fields!");
     
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', {
+      const res = await axios.post('https://swapno-api.onrender.com/api/auth/register', {
         email: emailInput,
         first_name: firstNameInput,
         last_name: lastNameInput
@@ -94,7 +94,7 @@ function App() {
     };
 
     try {
-      const res = await axios.post('http://localhost:5000/api/orders', payload);
+      const res = await axios.post('https://swapno-api.onrender.com/api/orders', payload);
       alert(`🎉 Order Placed Successfully!\nOrder ID: ${res.data.order_id}\nTotal Charged: ৳${res.data.total_amount}`);
       setCart([]); // Reset Cart UI state
       fetchProducts(); // Refresh stock metrics from backend DB
