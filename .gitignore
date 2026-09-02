@@ -30,3 +30,12 @@ Thumbs.db
 # 🚀 Log Files
 npm-debug.log*
 yarn-debug.log*
+# 🔥 Firebase Secrets
+backend/serviceAccountKey.json
+serviceAccountKey.json
+firebase-debug.log
+.firebase/
+
+# 💳 Stripe / misc secrets
+*.pem
+*.key

@@ -15,16 +15,15 @@ export async function initDatabase() {
         driver: sqlite3.verbose().Database
     });
 
-    // Enforce foreign key constraints
     await db.get("PRAGMA foreign_keys = ON");
 
-    // Initialize clean tables matching the schema
     await db.exec(`
         CREATE TABLE IF NOT EXISTS CUSTOMERS (
             customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
-            phone TEXT
+            phone TEXT,
+            firebase_uid TEXT UNIQUE
         );
 
         CREATE TABLE IF NOT EXISTS PRODUCTS (
@@ -39,6 +38,7 @@ export async function initDatabase() {
             customer_id INTEGER,
             total_amount REAL NOT NULL,
             payment_status TEXT DEFAULT 'Pending',
+            stripe_payment_intent_id TEXT,
             order_date TEXT NOT NULL,
             FOREIGN KEY (customer_id) REFERENCES CUSTOMERS(customer_id)
         );
@@ -54,25 +54,31 @@ export async function initDatabase() {
         );
     `);
 
-    // Seed data if empty
-    const checkCustomer = await db.get("SELECT COUNT(*) as count FROM CUSTOMERS");
-    if (checkCustomer.count === 0) {
-        await db.run(
-            `INSERT INTO CUSTOMERS (name, email, phone) VALUES (?, ?, ?)`,
-            ['MD Sagor Chowdhury', 'sagor@example.com', '01700000000']
-        );
+    // Migration safety net — adds the new columns if you already have an existing
+    // database.sqlite from before Firebase/Stripe were added.
+    const customerCols = await db.all("PRAGMA table_info(CUSTOMERS)");
+    if (!customerCols.some(c => c.name === 'firebase_uid')) {
+        await db.run("ALTER TABLE CUSTOMERS ADD COLUMN firebase_uid TEXT UNIQUE");
+    }
 
+    const orderCols = await db.all("PRAGMA table_info(ORDERS)");
+    if (!orderCols.some(c => c.name === 'stripe_payment_intent_id')) {
+        await db.run("ALTER TABLE ORDERS ADD COLUMN stripe_payment_intent_id TEXT");
+    }
+
+    // Seed product catalog only — customers now come from Firebase login, not seed data
+    const checkProducts = await db.get("SELECT COUNT(*) as count FROM PRODUCTS");
+    if (checkProducts.count === 0) {
         await db.run(`INSERT INTO PRODUCTS (product_name, current_price, stock_quantity) VALUES 
             ('Aroong Liquid Milk 1L', 90.00, 100),
             ('Pran Premium Ghee 900g', 1100.00, 50),
             ('Chashi Chinigura Rice 1kg', 160.00, 200),
             ('ACI Pure Salt 1kg', 42.00, 500)
         `);
-        console.log("Database initialized and mock datasets successfully seeded.");
+        console.log("Database initialized and mock product catalog seeded.");
     }
 
     return db;
 }
 
-// Export a getter function to reuse the active database instance across routes
 export { db };
